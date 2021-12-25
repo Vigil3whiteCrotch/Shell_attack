@@ -1,0 +1,40 @@
+#!/bin/bash
+function Install_tcpdump(){
+    which tcpdump >/opt/test_tcpdump.txt
+        if [ $? -ne '0' ]
+        then
+            echo '检测到tcpdump不存在,即将尝试在线安装tcpdump.' 
+            yum install tcpdump -y >null >/opt/test_tcpdump.txt   
+        else
+            echo '检测到tcpdump存在,安装成功' 
+        fi
+}
+
+# function Output_logs(){
+# }
+
+function Test_tcpdump(){
+    which tcpdump >/opt/test_tcpdump.txt
+        if [ $? -eq '0' ]
+        then
+            echo 'tcpdump安装成功.' 
+        else
+            echo 'tcpdump安装失败请查看日志，或重新安装。' 
+        fi
+}
+
+function Get_logs(){
+    timeout -k 10s 4s tcpdump -i any >/opt/tcpdump_logs1.txt
+    awk '{print $1 $3}' /opt/tcpdump_logs1.txt >/opt/tcpdump_logs2.txt
+    tail -f  /opt/tcpdump_logs2.txt
+}
+
+
+
+function main(){
+    Install_tcpdump
+    Test_tcpdump
+    Get_logs
+}
+
+main
